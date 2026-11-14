@@ -1,0 +1,89 @@
+<?php
+
+namespace Universal Household\Helpers;
+
+class ERequirementNotMet extends \Exception
+{
+}
+
+const REQUIRED_PHP_EXTENSIONS = ['fileinfo', 'pdo_sqlite', 'gd', 'ctype', 'intl', 'zlib', 'mbstring',
+
+	// These are core extensions, so normally can't be missing, but seems to be the case, however, on FreeBSD
+	'filter', 'iconv', 'tokenizer', 'json'
+];
+
+const REQUIRED_PHP_VERSION = '8.5.0';
+const REQUIRED_SQLITE_VERSION = '3.40.0';
+
+class PrerequisiteChecker
+{
+	public function checkRequirements()
+	{
+		self::CheckPhpVersion();
+		self::CheckConfigFile();
+		self::CheckConfigDistFile();
+		self::CheckComposer();
+		self::CheckPhpExtensions();
+		self::CheckSqliteVersion();
+	}
+
+	private function CheckComposer()
+	{
+		if (!file_exists(__DIR__ . '/../packages/autoload.php'))
+		{
+			throw new ERequirementNotMet('/packages/autoload.php not found. Have you run Composer?');
+		}
+	}
+
+	private function CheckConfigDistFile()
+	{
+		if (!file_exists(__DIR__ . '/../config-dist.php'))
+		{
+			throw new ERequirementNotMet('config-dist.php not found. Please do not remove this file.');
+		}
+	}
+
+	private function CheckConfigFile()
+	{
+		if (!file_exists(UNIVERSALHOUSEHOLD_DATAPATH . '/config.php'))
+		{
+			throw new ERequirementNotMet('config.php in data directory (' . UNIVERSALHOUSEHOLD_DATAPATH . ') not found. Have you copied config-dist.php to the data directory and renamed it to config.php?');
+		}
+	}
+
+	private function CheckPhpExtensions()
+	{
+		$loadedExtensions = get_loaded_extensions();
+		foreach (REQUIRED_PHP_EXTENSIONS as $extension)
+		{
+			if (!in_array($extension, $loadedExtensions))
+			{
+				throw new ERequirementNotMet("PHP module '{$extension}' not installed, but required.");
+			}
+		}
+	}
+
+	private function CheckSqliteVersion()
+	{
+		$sqliteVersion = self::GetSqlVersion();
+		if (version_compare($sqliteVersion, REQUIRED_SQLITE_VERSION, '<'))
+		{
+			throw new ERequirementNotMet('SQLite ' . REQUIRED_SQLITE_VERSION . ' is required, however you are running ' . $sqliteVersion);
+		}
+	}
+
+	private function CheckPhpVersion()
+	{
+		$phpVersion = phpversion();
+		if (version_compare($phpVersion, REQUIRED_PHP_VERSION, '<'))
+		{
+			throw new ERequirementNotMet('PHP ' . REQUIRED_PHP_VERSION . ' is required, however you are running ' . $phpVersion);
+		}
+	}
+
+	private function GetSqlVersion(): string
+	{
+		$dbh = new \PDO('sqlite::memory:');
+		return $dbh->query('select sqlite_version()')->fetch()[0];
+	}
+}

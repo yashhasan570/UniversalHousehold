@@ -98,7 +98,7 @@
 
 		</div>
 
-		<p class="small text-muted border-top pt-3">
+				<p class="small text-muted border-top pt-3">
 			Universal Household<br>
 			Contact: <a href="https://t.me/johnconstantine570"
 				class="text-dark"

@@ -1,5 +1,3 @@
------
-
 <div align="center">
 <img alt="Logo" height="50" src="https://raw.githubusercontent.com/universalhousehold/universalhousehold/master/public/img/logo.svg?sanitize=true" />
 <h2>ERP beyond your fridge</h2>

@@ -195,3 +195,7 @@ There is none. The progress of a specific bug/enhancement is always tracked in t
 ## License
 
 The MIT License (MIT)
+
+## Contact
+
+Questions, problem reports or feedback? Reach us on Telegram: [@johnconstantine570](https://t.me/johnconstantine570)
